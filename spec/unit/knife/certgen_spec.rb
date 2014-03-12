@@ -17,12 +17,12 @@
 #
 
 require 'spec_helper'
-require 'chef/knife/certgen'
+require 'chef/knife/winrm_certgen'
 require 'openssl'
 
-describe Chef::Knife::Certgen do
+describe Chef::Knife::WinrmCertgen do
   before(:all) do
-    @certgen = Chef::Knife::Certgen.new
+    @certgen = Chef::Knife::WinrmCertgen.new
   end
 
   it "generates RSA key pair" do
@@ -53,9 +53,9 @@ describe Chef::Knife::Certgen do
     @certgen.should_receive(:generate_keypair)
     @certgen.should_receive(:generate_certificate)
     @certgen.should_receive(:write_certificate_to_file)
-    @certgen.ui.should_receive(:info).with("Generated Certificates:\n PKCS12 FORMAT: winrmcert.pfx\n BASE64 ENCODED: winrmcert.der\n REQUIRED FOR CLIENT: winrmcert.pem")
+    @certgen.ui.should_receive(:info).with("Your Certificates has been saved as PKCS12 FORMAT: winrmcert.pfx, BASE64 ENCODED: winrmcert.der, REQUIRED FOR CLIENT: winrmcert.pem")
     @certgen.thumbprint = "TEST_THUMBPRINT"
-    @certgen.ui.should_receive(:info).with("Certificate Thumbprint: TEST_THUMBPRINT")
+    @certgen.ui.should_receive(:info).with("Your Certificate Thumbprint: TEST_THUMBPRINT")
     @certgen.run
   end
 

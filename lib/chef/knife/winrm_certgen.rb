@@ -22,11 +22,11 @@ require 'socket'
 
 class Chef
   class Knife
-    class Certgen < Knife
+    class WinrmCertgen < Knife
 
       attr_accessor :thumbprint, :hostname
 
-      banner "knife certgen (options)"
+      banner "knife winrm certgen (options)"
 
       option :domain,
         :short => "-d DOMAIN",
@@ -94,18 +94,29 @@ class Chef
         File.open(file_path + ".pfx", "wb") { |f| f.print pfx.to_der }
         File.open(file_path + ".der", "wb") { |f| f.print Base64.strict_encode64(pfx.to_der) }
       end
-        
+
       def run
         STDOUT.sync = STDERR.sync = true
         file_path = "winrmcert"
-        file_path = config[:output_file].sub(/\.(\w+)$/,'')
+
+        # default output_file is "winrmcert"
+        unless config[:output_file] == "winrmcert"
+          if File.directory?(config[:output_file])
+            file_path = "#{config[:output_file]}/winrmcert"
+          elsif File.file?(config[:output_file])
+            file_path = config[:output_file].sub(/\.(\w+)$/,'')
+          else
+            ui.error "No such '#{config[:output_file]}' directory or file path exist"
+            exit 1
+          end
+        end
 
         begin
           rsa_key = generate_keypair
           cert = generate_certificate rsa_key
           write_certificate_to_file cert, file_path, rsa_key
-          ui.info "Generated Certificates:\n PKCS12 FORMAT: #{file_path}.pfx\n BASE64 ENCODED: #{file_path}.der\n REQUIRED FOR CLIENT: #{file_path}.pem"
-          ui.info "Certificate Thumbprint: #{@thumbprint.to_s.upcase}"
+          ui.info "Your Certificates has been saved as PKCS12 FORMAT: #{file_path}.pfx, BASE64 ENCODED: #{file_path}.der, REQUIRED FOR CLIENT: #{file_path}.pem"
+          ui.info "Your Certificate Thumbprint: #{@thumbprint.to_s.upcase}"
         rescue => e
           puts "ERROR: + #{e}"
         end
