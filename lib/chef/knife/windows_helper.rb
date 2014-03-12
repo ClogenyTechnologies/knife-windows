@@ -20,7 +20,7 @@ require 'chef/knife'
 require 'chef/knife/winrm'
 require 'chef/knife/bootstrap_windows_ssh'
 require 'chef/knife/bootstrap_windows_winrm'
-require 'chef/knife/certgen'
+require 'chef/knife/winrm_certgen'
 require 'chef/knife/certinstall'
 
 class Chef
@@ -30,7 +30,7 @@ class Chef
       banner "#{BootstrapWindowsWinrm.banner}\n" +
               "#{BootstrapWindowsSsh.banner}\n" +
               "#{Winrm.banner}\n" +
-              "#{Certgen.banner}\n" +
+              "#{WinrmCertgen.banner}\n" +
               "#{Certinstall.banner}"
     end
   end
